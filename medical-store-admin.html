@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medical Store · Panel Administrativo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:        #0d2d5a;
+      --navy-mid:    #1a4480;
+      --blue-bright: #1a8fe0;
+      --cyan:        #00b4d8;
+      --surface:     #f4f7fb;
+      --card-bg:     #ffffff;
+      --text-main:   #0d2d5a;
+      --text-muted:  #607896;
+      --border-light: rgba(13,45,90,0.10);
+      --border-mid:   rgba(13,45,90,0.18);
+      --success:     #0fa36e;
+      --font-display: 'Syne', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: var(--font-body);
+      background: var(--surface);
+      color: var(--text-main);
+    }
+
+    /* ─── NAVBAR ─── */
+    .ms-nav {
+      background: var(--navy);
+      height: 56px;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .ms-nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .ms-logo-icon {
+      width: 34px;
+      height: 34px;
+      background: var(--cyan);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: -0.5px;
+      flex-shrink: 0;
+    }
+    .ms-logo-text {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 500;
+      color: #fff;
+    }
+    .ms-logo-text span { color: var(--cyan); }
+    .ms-nav-tagline {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+    .ms-nav-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ms-nav-avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--blue-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 500;
+      color: #fff;
+    }
+    .ms-nav-username {
+      font-size: 13px;
+      color: rgba(255,255,255,0.75);
+    }
+    .ms-nav-logout {
+      background: none;
+      border: 0.5px solid rgba(255,255,255,0.22);
+      border-radius: 5px;
+      padding: 4px 12px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      cursor: pointer;
+      font-family: var(--font-body);
+      transition: all 0.15s;
+      margin-left: 4px;
+    }
+    .ms-nav-logout:hover {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+    }
+
+    /* ─── FOOTER ─── */
+    .ms-footer {
+      background: var(--navy);
+      padding: 14px 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 0.5px solid rgba(255,255,255,0.08);
+    }
+    .ms-footer-copy {
+      font-size: 11px;
+      color: rgba(255,255,255,0.35);
+    }
+    .ms-footer-links { display: flex; gap: 16px; }
+    .ms-footer-links a {
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .ms-footer-links a:hover { color: var(--cyan); }
+
+    /* ─── VIEWS ─── */
+    .ms-view { display: none; flex-direction: column; min-height: 100vh; }
+    .ms-view.active { display: flex; }
+    .ms-view-body { flex: 1; }
+
+    /* ══════════════════════════════
+       LOGIN
+    ══════════════════════════════ */
+    #view-login .ms-view-body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1rem;
+      background: linear-gradient(160deg, #f4f7fb 55%, #ddeaf8 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .login-shape {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .login-shape-1 {
+      width: 380px; height: 380px;
+      background: rgba(0,180,216,0.05);
+      border: 1px solid rgba(0,180,216,0.10);
+      right: -80px; top: -100px;
+    }
+    .login-shape-2 {
+      width: 220px; height: 220px;
+      background: rgba(13,45,90,0.04);
+      border: 1px solid rgba(13,45,90,0.07);
+      left: -50px; bottom: -50px;
+    }
+
+    .login-card {
+      background: var(--card-bg);
+      border: 0.5px solid var(--border-light);
+      border-radius: 16px;
+      padding: 2.75rem 2.5rem 2.25rem;
+      width: 100%;
+      max-width: 400px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 4px 32px rgba(13,45,90,0.08);
+    }
+
+    .login-card-header { text-align: center; margin-bottom: 2.25rem; }
+
+    .login-card-icon {
+      width: 54px; height: 54px;
+      background: var(--navy);
+      border-radius: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+    }
+    .login-card-icon svg { width: 24px; height: 24px; }
+
+    .login-card-title {
+      font-family: var(--font-display);
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 5px;
+    }
+    .login-card-sub { font-size: 13px; color: var(--text-muted); }
+
+    /* Divisor */
+    .login-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1.75rem;
+    }
+    .login-divider hr {
+      flex: 1;
+      border: none;
+      border-top: 0.5px solid var(--border-light);
+    }
+    .login-divider span { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+
+    .form-group { margin-bottom: 1.15rem; }
+
+    .form-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 42px;
+      border: 0.5px solid var(--border-mid);
+      border-radius: 8px;
+      padding: 0 13px;
+      font-size: 14px;
+      font-family: var(--font-body);
+      color: var(--text-main);
+      background: #fafcff;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .form-input:focus {
+      border-color: var(--blue-bright);
+      box-shadow: 0 0 0 3px rgba(26,143,224,0.12);
+      background: #fff;
+    }
+    .form-input::placeholder { color: #b8c8d8; }
+
+    .btn-login {
+      width: 100%;
+      height: 44px;
+      background: var(--navy);
+      border: none;
+      border-radius: 9px;
+      color: #fff;
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 1.5rem;
+      transition: background 0.15s, transform 0.1s;
+      letter-spacing: 0.3px;
+    }
+    .btn-login:hover { background: var(--navy-mid); }
+    .btn-login:active { transform: scale(0.99); }
+
+    .login-error {
+      display: none;
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: #fff5f5;
+      border: 0.5px solid #ffc5c5;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #c0392b;
+      text-align: center;
+    }
+    .login-error.visible { display: block; }
+
+    .login-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 1.25rem;
+      opacity: 0.65;
+    }
+
+    /* ══════════════════════════════
+       DASHBOARD
+    ══════════════════════════════ */
+    #view-dashboard .ms-view-body {
+      padding: 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .dash-greeting { margin-bottom: 1.75rem; }
+    .dash-greeting-title {
+      font-family: var(--font-display);
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .dash-greeting-sub { font-size: 13px; color: var(--text-muted); }
+
+    /* Stats */
+    .dash-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 1.75rem;
+    }
+    @media (max-width: 600px) {
+      .dash-stats { grid-template-columns: 1fr; }
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 0.5px solid var(--border-light);
+      border-radius: 10px;
+      padding: 1rem 1.15rem;
+    }
+    .stat-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+    .stat-badge {
+      display: inline-block;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-top: 5px;
+      font-weight: 500;
+    }
+    .badge-green { background: #e6f7ef; color: #0a7a52; }
+    .badge-blue  { background: #e6f1fc; color: #1258a0; }
+
+    /* Main grid */
+    .dash-main-grid {
+      display: grid;
+      grid-template-columns: 1fr 290px;
+      gap: 16px;
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      .dash-main-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Panels */
+    .panel {
+      background: var(--card-bg);
+      border: 0.5px solid var(--border-light);
+      border-radius: 13px;
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 0.5px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .panel-header-icon {
+      width: 30px; height: 30px;
+      border-radius: 7px;
+      background: rgba(13,45,90,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .panel-header-icon svg { width: 15px; height: 15px; }
+    .panel-title {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--navy);
+    }
+    .panel-subtitle { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+    .panel-body { padding: 1.5rem 1.25rem; }
+
+    /* Drop Zone */
+    .drop-zone {
+      border: 1.5px dashed var(--border-mid);
+      border-radius: 11px;
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      transition: all 0.2s;
+      cursor: pointer;
+      position: relative;
+    }
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--blue-bright);
+      background: rgba(26,143,224,0.03);
+    }
+    .drop-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .drop-icon {
+      width: 48px; height: 48px;
+      background: rgba(13,45,90,0.06);
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 0.85rem;
+    }
+    .drop-icon svg { width: 22px; height: 22px; }
+    .drop-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+    .drop-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 1.1rem;
+    }
+    .btn-attach {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 20px;
+      background: transparent;
+      border: 0.5px solid var(--border-mid);
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: var(--font-body);
+      font-weight: 500;
+      color: var(--navy-mid);
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .drop-zone:hover .btn-attach {
+      background: var(--navy);
+      border-color: var(--navy);
+      color: #fff;
+    }
+    .file-types {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+    }
+    .file-type-badge {
+      font-size: 10px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: rgba(13,45,90,0.06);
+      color: var(--text-muted);
+      letter-spacing: 0.3px;
+    }
+
+    /* File selected */
+    .file-selected {
+      display: none;
+      margin-top: 1rem;
+      padding: 10px 14px;
+      background: #f0f7ff;
+      border: 0.5px solid #c5dcf5;
+      border-radius: 9px;
+      align-items: center;
+      gap: 10px;
+    }
+    .file-selected.visible { display: flex; }
+    .file-icon-wrap {
+      width: 34px; height: 34px;
+      background: var(--blue-bright);
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .file-icon-wrap svg { width: 16px; height: 16px; }
+    .file-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--navy);
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .file-size { font-size: 11px; color: var(--text-muted); flex-shrink: 0; }
+    .btn-remove-file {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      transition: color 0.1s;
+      flex-shrink: 0;
+    }
+    .btn-remove-file:hover { color: #c0392b; }
+
+    /* Predict button */
+    .btn-predict {
+      width: 100%;
+      height: 45px;
+      margin-top: 1.25rem;
+      background: var(--navy);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s;
+      letter-spacing: 0.3px;
+    }
+    .btn-predict:disabled {
+      background: #cad8ea;
+      color: #8fa8c4;
+      cursor: not-allowed;
+    }
+    .btn-predict:not(:disabled):hover { background: var(--navy-mid); }
+    .btn-predict:not(:disabled):active { transform: scale(0.99); }
+
+    .predict-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 8px;
+      min-height: 18px;
+    }
+
+    /* Loader */
+    .predict-loader {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px 0;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .predict-loader.visible { display: flex; }
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid var(--border-mid);
+      border-top-color: var(--blue-bright);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Result panel */
+    .result-panel {
+      display: none;
+      margin-top: 1.25rem;
+      padding: 1.1rem 1.25rem;
+      background: linear-gradient(135deg, #f0f9f5 0%, #e8f4fd 100%);
+      border: 0.5px solid #b5dfc8;
+      border-radius: 10px;
+    }
+    .result-panel.visible { display: block; }
+    .result-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #0a7a52;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 0.5px solid rgba(0,0,0,0.05);
+    }
+    .result-row:last-child { border-bottom: none; }
+    .result-key { font-size: 12px; color: var(--text-muted); }
+    .result-val { font-size: 13px; font-weight: 500; color: var(--navy); }
+
+    /* Side panels */
+    .side-panel { display: flex; flex-direction: column; gap: 14px; }
+
+    .history-list { display: flex; flex-direction: column; gap: 8px; }
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      background: var(--surface);
+      border-radius: 7px;
+    }
+    .history-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .history-dot.done    { background: var(--success); }
+    .history-dot.pending { background: var(--cyan); }
+    .history-item-name {
+      font-size: 12px;
+      color: var(--navy);
+      font-weight: 500;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .history-item-time { font-size: 10px; color: var(--text-muted); flex-shrink: 0; }
+
+    .tip-list { display: flex; flex-direction: column; gap: 9px; }
+    .tip-item { display: flex; gap: 9px; align-items: flex-start; }
+    .tip-num {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: rgba(13,45,90,0.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--navy);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .tip-text { font-size: 12px; color: var(--text-muted); line-height: 1.55; }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════
+       LOGIN VIEW
+  ══════════════════════════════ -->
+  <div id="view-login" class="ms-view active">
+
+    <nav class="ms-nav">
+      <a class="ms-nav-logo" href="#">
+        <div class="ms-logo-icon">MS</div>
+        <span class="ms-logo-text"><span>Medical</span> Store</span>
+      </a>
+      <span class="ms-nav-tagline">Sistema de Gestión Administrativa</span>
+    </nav>
+
+    <div class="ms-view-body">
+      <div class="login-shape login-shape-1"></div>
+      <div class="login-shape login-shape-2"></div>
+
+      <div class="login-card">
+        <div class="login-card-header">
+          <div class="login-card-icon">
+            <!-- Shield icon -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <polyline points="9 12 11 14 15 10" stroke="white" stroke-width="2.5"/>
+            </svg>
+          </div>
+          <div class="login-card-title">Acceso Administrativo</div>
+          <div class="login-card-sub">Plataforma de Gestión · Medical Store</div>
+        </div>
+
+        <div class="login-divider">
+          <hr /><span>Ingresa tus credenciales</span><hr />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="login-code">Código de Administrador</label>
+          <input class="form-input" id="login-code" type="text" placeholder="ADM-000000" autocomplete="off" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="login-pass">Contraseña</label>
+          <input class="form-input" id="login-pass" type="password" placeholder="••••••••" />
+        </div>
+
+        <div class="login-error" id="login-error">
+          Código o contraseña incorrectos. Por favor, inténtalo de nuevo.
+        </div>
+
+        <button class="btn-login" id="btn-login-submit">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+            <polyline points="10 17 15 12 10 7"/>
+            <line x1="15" y1="12" x2="3" y2="12"/>
+          </svg>
+          Ingresar al sistema
+        </button>
+
+        <p class="login-hint">Credenciales demo: <strong>ADM-001</strong> / <strong>admin123</strong></p>
+      </div>
+    </div>
+
+    <footer class="ms-footer">
+      <span class="ms-footer-copy">© 2025 Medical Store · Plataforma Administrativa v2.4</span>
+      <div class="ms-footer-links">
+        <a href="#">Soporte</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Términos</a>
+      </div>
+    </footer>
+  </div>
+
+
+  <!-- ══════════════════════════════
+       DASHBOARD VIEW
+  ══════════════════════════════ -->
+  <div id="view-dashboard" class="ms-view">
+
+    <nav class="ms-nav">
+      <a class="ms-nav-logo" href="#">
+        <div class="ms-logo-icon">MS</div>
+        <span class="ms-logo-text"><span>Medical</span> Store</span>
+      </a>
+      <div class="ms-nav-user">
+        <div class="ms-nav-avatar" id="nav-avatar">01</div>
+        <span class="ms-nav-username" id="nav-username">ADM-001</span>
+        <button class="ms-nav-logout" id="btn-logout">Cerrar sesión</button>
+      </div>
+    </nav>
+
+    <div class="ms-view-body">
+
+      <div class="dash-greeting">
+        <div class="dash-greeting-title">Panel de Predicción de Demanda</div>
+        <div class="dash-greeting-sub">Carga tu archivo de datos y obtén predicciones basadas en el modelo ML activo</div>
+      </div>
+
+      <!-- Stats -->
+      <div class="dash-stats">
+        <div class="stat-card">
+          <div class="stat-label">Predicciones hoy</div>
+          <div class="stat-value">24</div>
+          <span class="stat-badge badge-green">+8 vs ayer</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Precisión del modelo</div>
+          <div class="stat-value">94.2%</div>
+          <span class="stat-badge badge-blue">v3.1 activo</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Archivos procesados</div>
+          <div class="stat-value">312</div>
+          <span class="stat-badge badge-green">este mes</span>
+        </div>
+      </div>
+
+      <!-- Main grid -->
+      <div class="dash-main-grid">
+
+        <!-- Upload panel -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-header-icon">
+              <!-- Upload cloud icon -->
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 16 12 12 8 16"/>
+                <line x1="12" y1="12" x2="12" y2="21"/>
+                <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
+              </svg>
+            </div>
+            <div>
+              <div class="panel-title">Carga de datos</div>
+              <div class="panel-subtitle">Selecciona un archivo Excel o CSV para analizar</div>
+            </div>
+          </div>
+
+          <div class="panel-body">
+
+            <!-- Drop Zone -->
+            <div class="drop-zone" id="drop-zone">
+              <input type="file" id="file-input" accept=".xlsx,.xls,.csv" />
+
+              <div class="drop-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="12" y1="18" x2="12" y2="12"/>
+                  <line x1="9"  y1="15" x2="15" y2="15"/>
+                </svg>
+              </div>
+              <div class="drop-title">Arrastra tu archivo aquí</div>
+              <div class="drop-sub">o haz clic para buscar en tu equipo</div>
+              <button class="btn-attach" type="button">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                </svg>
+                Adjuntar archivo
+              </button>
+              <div class="file-types">
+                <span class="file-type-badge">.XLSX</span>
+                <span class="file-type-badge">.XLS</span>
+                <span class="file-type-badge">.CSV</span>
+              </div>
+            </div>
+
+            <!-- File selected info -->
+            <div class="file-selected" id="file-selected">
+              <div class="file-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                </svg>
+              </div>
+              <span class="file-name" id="file-name-display">archivo.xlsx</span>
+              <span class="file-size" id="file-size-display">—</span>
+              <button class="btn-remove-file" id="btn-remove-file" title="Quitar archivo">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6"  x2="6"  y2="18"/>
+                  <line x1="6"  y1="6"  x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Predict button -->
+            <button class="btn-predict" id="btn-predict" disabled type="button">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+              </svg>
+              Predecir
+            </button>
+
+            <!-- Loading -->
+            <div class="predict-loader" id="predict-loader">
+              <div class="spinner"></div>
+              <span>Analizando datos con el modelo ML...</span>
+            </div>
+
+            <p class="predict-hint" id="predict-hint">Selecciona un archivo para habilitar la predicción</p>
+
+            <!-- Results -->
+            <div class="result-panel" id="result-panel">
+              <div class="result-title">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Resultados de predicción
+              </div>
+              <div class="result-row">
+                <span class="result-key">Demanda estimada (7 días)</span>
+                <span class="result-val" id="res-demand">—</span>
+              </div>
+              <div class="result-row">
+                <span class="result-key">Confianza del modelo</span>
+                <span class="result-val" id="res-conf">—</span>
+              </div>
+              <div class="result-row">
+                <span class="result-key">Productos analizados</span>
+                <span class="result-val" id="res-prod">—</span>
+              </div>
+              <div class="result-row">
+                <span class="result-key">Tiempo de procesamiento</span>
+                <span class="result-val" id="res-time">—</span>
+              </div>
+            </div>
+
+          </div><!-- /panel-body -->
+        </div><!-- /upload panel -->
+
+
+        <!-- Side panel -->
+        <div class="side-panel">
+
+          <!-- History -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-header-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+              </div>
+              <div>
+                <div class="panel-title">Historial reciente</div>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="history-list">
+                <div class="history-item">
+                  <div class="history-dot done"></div>
+                  <span class="history-item-name">ventas_junio.xlsx</span>
+                  <span class="history-item-time">hace 2h</span>
+                </div>
+                <div class="history-item">
+                  <div class="history-dot done"></div>
+                  <span class="history-item-name">inventario_Q2.csv</span>
+                  <span class="history-item-time">ayer</span>
+                </div>
+                <div class="history-item">
+                  <div class="history-dot done"></div>
+                  <span class="history-item-name">reporte_mayo.xlsx</span>
+                  <span class="history-item-time">hace 3d</span>
+                </div>
+                <div class="history-item">
+                  <div class="history-dot pending"></div>
+                  <span class="history-item-name">productos_new.csv</span>
+                  <span class="history-item-time">hace 5d</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tips -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-header-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8"  x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+              </div>
+              <div>
+                <div class="panel-title">Recomendaciones</div>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="tip-list">
+                <div class="tip-item">
+                  <div class="tip-num">1</div>
+                  <span class="tip-text">Usa la primera fila como encabezados de columna</span>
+                </div>
+                <div class="tip-item">
+                  <div class="tip-num">2</div>
+                  <span class="tip-text">Incluye al menos 30 filas de datos históricos</span>
+                </div>
+                <div class="tip-item">
+                  <div class="tip-num">3</div>
+                  <span class="tip-text">La columna de fecha debe estar en formato DD/MM/AAAA</span>
+                </div>
+                <div class="tip-item">
+                  <div class="tip-num">4</div>
+                  <span class="tip-text">Tamaño máximo de archivo permitido: 25 MB</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /side-panel -->
+      </div><!-- /dash-main-grid -->
+    </div><!-- /ms-view-body -->
+
+    <footer class="ms-footer">
+      <span class="ms-footer-copy">© 2025 Medical Store · Plataforma Administrativa v2.4</span>
+      <div class="ms-footer-links">
+        <a href="#">Soporte</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Términos</a>
+      </div>
+    </footer>
+  </div><!-- /view-dashboard -->
+
+
+  <!-- ══════════════════════════════
+       JAVASCRIPT
+  ══════════════════════════════ -->
+  <script>
+    /* ── Elementos ── */
+    const viewLogin     = document.getElementById('view-login');
+    const viewDashboard = document.getElementById('view-dashboard');
+    const loginError    = document.getElementById('login-error');
+    const btnLogin      = document.getElementById('btn-login-submit');
+    const btnLogout     = document.getElementById('btn-logout');
+    const fileInput     = document.getElementById('file-input');
+    const dropZone      = document.getElementById('drop-zone');
+    const fileSelected  = document.getElementById('file-selected');
+    const fileNameEl    = document.getElementById('file-name-display');
+    const fileSizeEl    = document.getElementById('file-size-display');
+    const btnRemove     = document.getElementById('btn-remove-file');
+    const btnPredict    = document.getElementById('btn-predict');
+    const predictHint   = document.getElementById('predict-hint');
+    const predictLoader = document.getElementById('predict-loader');
+    const resultPanel   = document.getElementById('result-panel');
+    const navAvatar     = document.getElementById('nav-avatar');
+    const navUsername   = document.getElementById('nav-username');
+
+    /* ── Navegación entre vistas ── */
+    function showView(name) {
+      viewLogin.classList.toggle('active', name === 'login');
+      viewDashboard.classList.toggle('active', name === 'dashboard');
+    }
+
+    /* ── LOGIN ── */
+    btnLogin.addEventListener('click', () => {
+      const code = document.getElementById('login-code').value.trim();
+      const pass = document.getElementById('login-pass').value.trim();
+
+      /*
+       * PRODUCCIÓN: reemplaza esta validación estática por:
+       *
+       *   const res = await fetch('/api/auth/login', {
+       *     method: 'POST',
+       *     headers: { 'Content-Type': 'application/json' },
+       *     body: JSON.stringify({ code, password: pass })
+       *   });
+       *   if (res.ok) { const { token } = await res.json(); ... }
+       */
+      if (code === 'ADM-001' && pass === 'admin123') {
+        loginError.classList.remove('visible');
+        navUsername.textContent = code;
+        navAvatar.textContent   = code.replace('ADM-', '').padStart(2, '0');
+        showView('dashboard');
+      } else {
+        loginError.classList.add('visible');
+      }
+    });
+
+    /* Enter en el campo contraseña */
+    document.getElementById('login-pass').addEventListener('keydown', e => {
+      if (e.key === 'Enter') btnLogin.click();
+    });
+
+    /* ── LOGOUT ── */
+    btnLogout.addEventListener('click', () => {
+      resetFile();
+      document.getElementById('login-code').value = '';
+      document.getElementById('login-pass').value = '';
+      showView('login');
+    });
+
+    /* ── ARCHIVO ── */
+    function handleFile(file) {
+      if (!file) return;
+      const ext = '.' + file.name.split('.').pop().toLowerCase();
+      if (!['.xlsx', '.xls', '.csv'].includes(ext)) {
+        alert('Formato no válido. Solo se aceptan archivos .xlsx, .xls y .csv');
+        return;
+      }
+      fileNameEl.textContent = file.name;
+      const kb = file.size / 1024;
+      fileSizeEl.textContent = kb > 1024
+        ? (kb / 1024).toFixed(1) + ' MB'
+        : Math.round(kb) + ' KB';
+
+      fileSelected.classList.add('visible');
+      btnPredict.disabled    = false;
+      predictHint.textContent = 'Archivo listo · haz clic en "Predecir" para comenzar';
+      resultPanel.classList.remove('visible');
+      predictLoader.classList.remove('visible');
+    }
+
+    function resetFile() {
+      fileInput.value = '';
+      fileSelected.classList.remove('visible');
+      btnPredict.disabled    = true;
+      btnPredict.style.display = '';
+      predictHint.textContent = 'Selecciona un archivo para habilitar la predicción';
+      resultPanel.classList.remove('visible');
+      predictLoader.classList.remove('visible');
+    }
+
+    fileInput.addEventListener('change', () => handleFile(fileInput.files[0]));
+    btnRemove.addEventListener('click', e => { e.stopPropagation(); resetFile(); });
+
+    /* Drag & Drop */
+    dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', ()  => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+    });
+
+    /* ── PREDECIR ── */
+    btnPredict.addEventListener('click', () => {
+      if (btnPredict.disabled) return;
+
+      btnPredict.style.display = 'none';
+      predictLoader.classList.add('visible');
+      predictHint.textContent  = '';
+      resultPanel.classList.remove('visible');
+
+      const t0 = Date.now();
+
+      /*
+       * PRODUCCIÓN: reemplaza el setTimeout por una llamada real:
+       *
+       *   const form = new FormData();
+       *   form.append('file', fileInput.files[0]);
+       *   const res = await fetch('/api/predict', {
+       *     method: 'POST',
+       *     headers: { 'Authorization': `Bearer ${token}` },
+       *     body: form
+       *   });
+       *   const data = await res.json();
+       *   showResults(data);
+       */
+      setTimeout(() => {
+        const elapsed = ((Date.now() - t0) / 1000).toFixed(2);
+        const demand  = (Math.floor(Math.random() * 800) + 400).toLocaleString('es-PE');
+        const conf    = (88 + Math.random() * 8).toFixed(1);
+        const prods   = Math.floor(Math.random() * 50) + 30;
+
+        document.getElementById('res-demand').textContent = demand + ' unidades';
+        document.getElementById('res-conf').textContent   = conf + '%';
+        document.getElementById('res-prod').textContent   = prods + ' SKUs';
+        document.getElementById('res-time').textContent   = elapsed + ' s';
+
+        predictLoader.classList.remove('visible');
+        btnPredict.style.display = '';
+        resultPanel.classList.add('visible');
+        predictHint.textContent  = 'Predicción completada exitosamente';
+      }, 2200);
+    });
+  </script>
+</body>
+</html>
